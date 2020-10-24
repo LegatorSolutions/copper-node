@@ -83,6 +83,7 @@ Rails.application.routes.draw do
     resource :inbox, only: [:create], module: :activitypub
     resource :claim, only: [:create], module: :activitypub
     resources :collections, only: [:show], module: :activitypub
+    resource :followers_synchronization, only: [:show], module: :activitypub
   end
 
   resource :inbox, only: [:create], module: :activitypub
@@ -232,7 +233,7 @@ Rails.application.routes.draw do
 
     resources :report_notes, only: [:create, :destroy]
 
-    resources :accounts, only: [:index, :show] do
+    resources :accounts, only: [:index, :show, :destroy] do
       member do
         post :enable
         post :unsilence
@@ -278,6 +279,12 @@ Rails.application.routes.draw do
     end
 
     resources :custom_emojis, only: [:index, :new, :create] do
+      collection do
+        post :batch
+      end
+    end
+
+    resources :ip_blocks, only: [:index, :new, :create] do
       collection do
         post :batch
       end
@@ -466,7 +473,7 @@ Rails.application.routes.draw do
       end
 
       namespace :admin do
-        resources :accounts, only: [:index, :show] do
+        resources :accounts, only: [:index, :show, :destroy] do
           member do
             post :enable
             post :unsilence
